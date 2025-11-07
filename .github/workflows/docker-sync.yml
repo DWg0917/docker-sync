@@ -24,38 +24,6 @@ jobs:
           echo "${{ secrets.REGISTRY_PASS }}" | docker login --username ${{ secrets.REGISTRY_USER }} --password-stdin crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com
 
       ####################
-      # 数据库与缓存镜像 #
-      ####################
-
-      # PostgreSQL 12
-      - name: Sync PostgreSQL 12
-        run: skopeo copy --all docker://docker.io/library/postgres:12-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine
-
-      # Redis 6.2.7
-      - name: Sync Redis 6.2.7
-        run: skopeo copy --all docker://docker.io/library/redis:6.2.7-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine
-
-      # Redis 7.2
-      - name: Sync Redis 7.2
-        run: skopeo copy --all docker://docker.io/library/redis:7.2-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine
-
-      # ClickHouse
-      - name: Sync ClickHouse
-        run: skopeo copy --all docker://docker.io/clickhouse/clickhouse-server:25.6.9.98 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98
-
-      ####################
-      # Kafka 与 UI 镜像 #
-      ####################
-
-      # Kafka (Redpanda)
-      - name: Sync Kafka (Redpanda)
-        run: skopeo copy --all docker://docker.io/redpandadata/redpanda:v25.1.9 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9
-
-      # Kafka-UI
-      - name: Sync Kafka-UI
-        run: skopeo copy --all docker://docker.io/provectuslabs/kafka-ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest
-
-      ####################
       # 其他服务镜像 #
       ####################
 
