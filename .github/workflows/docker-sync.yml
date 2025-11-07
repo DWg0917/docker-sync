@@ -1,0 +1,129 @@
+name: PostHog Docker Sync
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 每天凌晨1点
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 登录腾讯云 TCR
+      - name: Login to Tencent Cloud Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.TCR_USER }}
+          password: ${{ secrets.TCR_PASS }}
+
+      ####################
+      # 数据库与缓存镜像 #
+      ####################
+
+      # PostgreSQL 12
+      - name: Pull PostgreSQL 12
+        run: docker pull postgres:12-alpine
+      - name: Tag PostgreSQL 12 for TCR
+        run: docker tag postgres:12-alpine crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine
+      - name: Push PostgreSQL 12 to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine
+
+      # Redis 6.2.7
+      - name: Pull Redis 6.2.7
+        run: docker pull redis:6.2.7-alpine
+      - name: Tag Redis 6.2.7 for TCR
+        run: docker tag redis:6.2.7-alpine crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine
+      - name: Push Redis 6.2.7 to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine
+
+      # Redis 7
+      - name: Pull Redis 7.2
+        run: docker pull redis:7.2-alpine
+      - name: Tag Redis 7.2 for TCR
+        run: docker tag redis:7.2-alpine crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine
+      - name: Push Redis 7.2 to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine
+
+      # ClickHouse
+      - name: Pull ClickHouse
+        run: docker pull clickhouse/clickhouse-server:25.6.9.98
+      - name: Tag ClickHouse for TCR
+        run: docker tag clickhouse/clickhouse-server:25.6.9.98 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98
+      - name: Push ClickHouse to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98
+
+      ####################
+      # Kafka 与 UI 镜像 #
+      ####################
+
+      # Kafka (Redpanda)
+      - name: Pull Kafka (Redpanda)
+        run: docker pull redpandadata/redpanda:v25.1.9
+      - name: Tag Kafka for TCR
+        run: docker tag redpandadata/redpanda:v25.1.9 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9
+      - name: Push Kafka to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9
+
+      # Kafka-UI
+      - name: Pull Kafka-UI
+        run: docker pull provectuslabs/kafka-ui:latest
+      - name: Tag Kafka-UI for TCR
+        run: docker tag provectuslabs/kafka-ui:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest
+      - name: Push Kafka-UI to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest
+
+      ####################
+      # 其他服务镜像 #
+      ####################
+
+      # Zookeeper
+      - name: Pull Zookeeper
+        run: docker pull bitnami/zookeeper:latest
+      - name: Tag Zookeeper for TCR
+        run: docker tag bitnami/zookeeper:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:latest
+      - name: Push Zookeeper to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:latest
+
+      # Object Storage
+      - name: Pull MinIO (objectstorage)
+        run: docker pull minio/minio:latest
+      - name: Tag MinIO for TCR
+        run: docker tag minio/minio:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest
+      - name: Push MinIO to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest
+
+      # Temporal
+      - name: Pull Temporal
+        run: docker pull temporalio/auto-setup:latest
+      - name: Tag Temporal for TCR
+        run: docker tag temporalio/auto-setup:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest
+      - name: Push Temporal to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest
+
+      # Temporal UI
+      - name: Pull Temporal UI
+        run: docker pull temporalio/ui:latest
+      - name: Tag Temporal UI for TCR
+        run: docker tag temporalio/ui:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest
+      - name: Push Temporal UI to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest
+
+      # Elasticsearch
+      - name: Pull Elasticsearch
+        run: docker pull docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+      - name: Tag Elasticsearch for TCR
+        run: docker tag docker.elastic.co/elasticsearch/elasticsearch:8.11.0 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0
+      - name: Push Elasticsearch to TCR
+        run: docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0
+
+      # Web / Worker / Plugins / Async migrations / Feature flags
+      - name: Pull PostHog App Images
+        run: |
+          for svc in web worker plugins asyncmigrationscheck feature-flags; do
+            docker pull posthog/posthog:latest
+            docker tag posthog/posthog:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest
+            docker push crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest
+          done
