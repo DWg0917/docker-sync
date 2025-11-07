@@ -27,29 +27,8 @@ jobs:
       # 其他服务镜像 #
       ####################
 
-      # Zookeeper
-      - name: Sync Zookeeper
-        run: skopeo copy --all docker://docker.io/library/zookeeper:3.7.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0
-
-      # Object Storage (MinIO)
-      - name: Sync MinIO
-        run: skopeo copy --all docker://docker.io/minio/minio:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest
-
-      # Temporal
-      - name: Sync Temporal
-        run: skopeo copy --all docker://docker.io/temporalio/auto-setup:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest
-
-      # Temporal UI
-      - name: Sync Temporal UI
-        run: skopeo copy --all docker://docker.io/temporalio/ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest
-
-      # Elasticsearch
-      - name: Sync Elasticsearch
-        run: skopeo copy --all docker://docker.elastic.co/elasticsearch/elasticsearch:8.11.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0
-
-      # PostHog app images
-      - name: Sync PostHog App Images
+      - name: Sync PostHog App Image to TCR
         run: |
-          for svc in web worker plugins asyncmigrationscheck feature-flags; do
-            skopeo copy --all docker://docker.io/posthog/posthog:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest
-          done
+          skopeo copy --all \
+            docker://docker.io/posthog/posthog:latest \
+            docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/posthog:latest
