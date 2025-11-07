@@ -31,4 +31,4 @@ jobs:
         run: |
           skopeo copy --all \
             docker://docker.io/posthog/posthog:latest \
-            docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/posthog:latest
+            docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/posthog:latest
