@@ -12,166 +12,76 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 登录腾讯云 TCR
-      - name: Login to Tencent Cloud Registry
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_PASS }}
-          registry: crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com
+      # 安装 skopeo
+      - name: Install skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      # 登录阿里云容器镜像仓库
+      - name: Login to Alibaba Cloud Registry
+        run: |
+          echo "${{ secrets.REGISTRY_PASS }}" | docker login --username ${{ secrets.REGISTRY_USER }} --password-stdin crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com
 
       ####################
       # 数据库与缓存镜像 #
       ####################
 
       # PostgreSQL 12
-      - name: Pull PostgreSQL 12
-        run: docker pull postgres:12-alpine
-      - name: Tag PostgreSQL 12 for TCR
-        run: docker tag postgres:12-alpine crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine
-      - name: Push PostgreSQL 12 to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine && break
-            sleep 10
-          done
+      - name: Sync PostgreSQL 12
+        run: skopeo copy --all docker://docker.io/library/postgres:12-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine
 
       # Redis 6.2.7
-      - name: Pull Redis 6.2.7
-        run: docker pull redis:6.2.7-alpine
-      - name: Tag Redis 6.2.7 for TCR
-        run: docker tag redis:6.2.7-alpine crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine
-      - name: Push Redis 6.2.7 to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine && break
-            sleep 10
-          done
+      - name: Sync Redis 6.2.7
+        run: skopeo copy --all docker://docker.io/library/redis:6.2.7-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine
 
-      # Redis 7
-      - name: Pull Redis 7.2
-        run: docker pull redis:7.2-alpine
-      - name: Tag Redis 7.2 for TCR
-        run: docker tag redis:7.2-alpine crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine
-      - name: Push Redis 7.2 to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine && break
-            sleep 10
-          done
+      # Redis 7.2
+      - name: Sync Redis 7.2
+        run: skopeo copy --all docker://docker.io/library/redis:7.2-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine
 
       # ClickHouse
-      - name: Pull ClickHouse
-        run: docker pull clickhouse/clickhouse-server:25.6.9.98
-      - name: Tag ClickHouse for TCR
-        run: docker tag clickhouse/clickhouse-server:25.6.9.98 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98
-      - name: Push ClickHouse to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98 && break
-            sleep 10
-          done
+      - name: Sync ClickHouse
+        run: skopeo copy --all docker://docker.io/clickhouse/clickhouse-server:25.6.9.98 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98
 
       ####################
       # Kafka 与 UI 镜像 #
       ####################
 
       # Kafka (Redpanda)
-      - name: Pull Kafka (Redpanda)
-        run: docker pull redpandadata/redpanda:v25.1.9
-      - name: Tag Kafka for TCR
-        run: docker tag redpandadata/redpanda:v25.1.9 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9
-      - name: Push Kafka to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9 && break
-            sleep 10
-          done
+      - name: Sync Kafka (Redpanda)
+        run: skopeo copy --all docker://docker.io/redpandadata/redpanda:v25.1.9 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9
 
       # Kafka-UI
-      - name: Pull Kafka-UI
-        run: docker pull provectuslabs/kafka-ui:latest
-      - name: Tag Kafka-UI for TCR
-        run: docker tag provectuslabs/kafka-ui:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest
-      - name: Push Kafka-UI to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest && break
-            sleep 10
-          done
+      - name: Sync Kafka-UI
+        run: skopeo copy --all docker://docker.io/provectuslabs/kafka-ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest
 
       ####################
       # 其他服务镜像 #
       ####################
 
       # Zookeeper
-      - name: Pull Zookeeper
-        run: docker pull zookeeper:3.7.0
-      - name: Tag Zookeeper for TCR
-        run: docker tag zookeeper:3.7.0 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0
-      - name: Push Zookeeper to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0 && break
-            sleep 10
-          done
+      - name: Sync Zookeeper
+        run: skopeo copy --all docker://docker.io/bitnami/zookeeper:3.7.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0
 
       # Object Storage (MinIO)
-      - name: Pull MinIO
-        run: docker pull minio/minio:latest
-      - name: Tag MinIO for TCR
-        run: docker tag minio/minio:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest
-      - name: Push MinIO to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest && break
-            sleep 10
-          done
+      - name: Sync MinIO
+        run: skopeo copy --all docker://docker.io/minio/minio:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest
 
       # Temporal
-      - name: Pull Temporal
-        run: docker pull temporalio/auto-setup:latest
-      - name: Tag Temporal for TCR
-        run: docker tag temporalio/auto-setup:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest
-      - name: Push Temporal to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest && break
-            sleep 10
-          done
+      - name: Sync Temporal
+        run: skopeo copy --all docker://docker.io/temporalio/auto-setup:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest
 
       # Temporal UI
-      - name: Pull Temporal UI
-        run: docker pull temporalio/ui:latest
-      - name: Tag Temporal UI for TCR
-        run: docker tag temporalio/ui:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest
-      - name: Push Temporal UI to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest && break
-            sleep 10
-          done
+      - name: Sync Temporal UI
+        run: skopeo copy --all docker://docker.io/temporalio/ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest
 
       # Elasticsearch
-      - name: Pull Elasticsearch
-        run: docker pull docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-      - name: Tag Elasticsearch for TCR
-        run: docker tag docker.elastic.co/elasticsearch/elasticsearch:8.11.0 crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0
-      - name: Push Elasticsearch to TCR
-        run: |
-          for i in {1..3}; do
-            docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0 && break
-            sleep 10
-          done
+      - name: Sync Elasticsearch
+        run: skopeo copy --all docker://docker.elastic.co/elasticsearch/elasticsearch:8.11.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0
 
-      # PostHog 应用镜像
-      - name: Pull PostHog App Images
+      # PostHog app images
+      - name: Sync PostHog App Images
         run: |
           for svc in web worker plugins asyncmigrationscheck feature-flags; do
-            docker pull posthog/posthog:latest
-            docker tag posthog/posthog:latest crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest
-            for i in {1..3}; do
-              docker push --progress=plain crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest && break
-              sleep 10
-            done
+            skopeo copy --all docker://docker.io/posthog/posthog:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest
           done
