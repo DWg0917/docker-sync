@@ -29,19 +29,19 @@ jobs:
 
       # PostgreSQL 12
       - name: Sync PostgreSQL 12
-        run: skopeo copy --all docker://docker.io/library/postgres:12-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/postgres:12-alpine
+        run: skopeo copy --all docker://docker.io/library/postgres:12-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/postgres:12-alpine
 
       # Redis 6.2.7
       - name: Sync Redis 6.2.7
-        run: skopeo copy --all docker://docker.io/library/redis:6.2.7-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis:6.2.7-alpine
+        run: skopeo copy --all docker://docker.io/library/redis:6.2.7-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/redis:6.2.7-alpine
 
       # Redis 7.2
       - name: Sync Redis 7.2
-        run: skopeo copy --all docker://docker.io/library/redis:7.2-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/redis7:7.2-alpine
+        run: skopeo copy --all docker://docker.io/library/redis:7.2-alpine docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/redis7:7.2-alpine
 
       # ClickHouse
       - name: Sync ClickHouse
-        run: skopeo copy --all docker://docker.io/clickhouse/clickhouse-server:25.6.9.98 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/clickhouse:25.6.9.98
+        run: skopeo copy --all docker://docker.io/clickhouse/clickhouse-server:25.6.9.98 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/clickhouse:25.6.9.98
 
       ####################
       # Kafka 与 UI 镜像 #
@@ -49,11 +49,11 @@ jobs:
 
       # Kafka (Redpanda)
       - name: Sync Kafka (Redpanda)
-        run: skopeo copy --all docker://docker.io/redpandadata/redpanda:v25.1.9 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka:v25.1.9
+        run: skopeo copy --all docker://docker.io/redpandadata/redpanda:v25.1.9 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/kafka:v25.1.9
 
       # Kafka-UI
       - name: Sync Kafka-UI
-        run: skopeo copy --all docker://docker.io/provectuslabs/kafka-ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/kafka-ui:latest
+        run: skopeo copy --all docker://docker.io/provectuslabs/kafka-ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/kafka-ui:latest
 
       ####################
       # 其他服务镜像 #
@@ -61,27 +61,24 @@ jobs:
 
       # Zookeeper
       - name: Sync Zookeeper
-        run: skopeo copy --all docker://docker.io/library/zookeeper:3.7.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0
+        run: skopeo copy --all docker://docker.io/library/zookeeper:3.7.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/zookeeper:3.7.0
 
       # Object Storage (MinIO)
       - name: Sync MinIO
-        run: skopeo copy --all docker://docker.io/minio/minio:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/objectstorage:latest
+        run: skopeo copy --all docker://docker.io/minio/minio:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/objectstorage:latest
 
       # Temporal
       - name: Sync Temporal
-        run: skopeo copy --all docker://docker.io/temporalio/auto-setup:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal:latest
+        run: skopeo copy --all docker://docker.io/temporalio/auto-setup:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/temporal:latest
 
       # Temporal UI
       - name: Sync Temporal UI
-        run: skopeo copy --all docker://docker.io/temporalio/ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/temporal-ui:latest
+        run: skopeo copy --all docker://docker.io/temporalio/ui:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/temporal-ui:latest
 
       # Elasticsearch
       - name: Sync Elasticsearch
-        run: skopeo copy --all docker://docker.elastic.co/elasticsearch/elasticsearch:8.11.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/elasticsearch:8.11.0
+        run: skopeo copy --all docker://docker.elastic.co/elasticsearch/elasticsearch:8.11.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/elasticsearch:8.11.0
 
       # PostHog app images
       - name: Sync PostHog App Images
-        run: |
-          for svc in web worker plugins asyncmigrationscheck feature-flags; do
-            skopeo copy --all docker://docker.io/posthog/posthog:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/$svc:latest
-          done
+        run: skopeo copy --all docker://docker.io/posthog/posthog:latest docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/posthog:latest
