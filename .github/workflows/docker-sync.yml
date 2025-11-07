@@ -61,7 +61,7 @@ jobs:
 
       # Zookeeper
       - name: Sync Zookeeper
-        run: skopeo copy --all docker://docker.io/bitnami/zookeeper:3.7.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0
+        run: skopeo copy --all docker://docker.io/library/zookeeper:3.7.0 docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/diweigao/zookeeper:3.7.0
 
       # Object Storage (MinIO)
       - name: Sync MinIO
