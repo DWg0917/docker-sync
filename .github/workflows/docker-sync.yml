@@ -1,4 +1,4 @@
-name: PostHog Docker Sync
+name: cAdvisor Docker Sync
 
 on:
   schedule:
@@ -23,12 +23,9 @@ jobs:
         run: |
           echo "${{ secrets.REGISTRY_PASS }}" | docker login --username ${{ secrets.REGISTRY_USER }} --password-stdin crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com
 
-      ####################
-      # 其他服务镜像 #
-      ####################
-
-      - name: Sync PostHog App Image to TCR
+      # 同步 cAdvisor 镜像到阿里云
+      - name: Sync cAdvisor Image to TCR
         run: |
           skopeo copy --all \
-            docker://docker.io/posthog/posthog:latest \
-            docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/posthog:latest
+            docker://gcr.io/cadvisor/cadvisor:latest \
+            docker://crpi-buokw0gwl7et16ij.cn-chengdu.personal.cr.aliyuncs.com/posthog/cadvisor:latest
